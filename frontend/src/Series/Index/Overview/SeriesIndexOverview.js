@@ -110,8 +110,6 @@ class SeriesIndexOverview extends Component {
     const contentHeight = getContentHeight(rowHeight, isSmallScreen);
     const overviewHeight = contentHeight - titleRowHeight;
 
-    console.log(overviewHeight);
-
     return (
       <div className={styles.container} style={style}>
         <div className={styles.content}>
