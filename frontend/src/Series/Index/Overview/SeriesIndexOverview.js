@@ -1,8 +1,8 @@
 import PropTypes from 'prop-types';
 import React, { Component } from 'react';
-import Measure from 'react-measure';
 import TextTruncate from 'react-text-truncate';
 import { icons } from 'Helpers/Props';
+import dimensions from 'Styles/Variables/dimensions';
 import fonts from 'Styles/Variables/fonts';
 import IconButton from 'Components/Link/IconButton';
 import Link from 'Components/Link/Link';
@@ -14,8 +14,20 @@ import SeriesIndexProgressBar from 'Series/Index/ProgressBar/SeriesIndexProgress
 import SeriesIndexOverviewInfo from './SeriesIndexOverviewInfo';
 import styles from './SeriesIndexOverview.css';
 
+const columnPadding = parseInt(dimensions.seriesIndexColumnPadding);
+const columnPaddingSmallScreen = parseInt(dimensions.seriesIndexColumnPaddingSmallScreen);
 const defaultFontSize = parseInt(fonts.defaultFontSize);
 const lineHeight = parseFloat(fonts.lineHeight);
+
+// Hardcoded height beased on line-height of 32 + bottom margin of 10.
+// Less side-effecty than using react-measure.
+const titleRowHeight = 42;
+
+function getContentHeight(rowHeight, isSmallScreen) {
+  const padding = isSmallScreen ? columnPaddingSmallScreen : columnPadding;
+
+  return rowHeight - padding;
+}
 
 class SeriesIndexOverview extends Component {
 
@@ -27,8 +39,7 @@ class SeriesIndexOverview extends Component {
 
     this.state = {
       isEditSeriesModalOpen: false,
-      isDeleteSeriesModalOpen: false,
-      overviewHeight: 0
+      isDeleteSeriesModalOpen: false
     };
   }
 
@@ -52,10 +63,6 @@ class SeriesIndexOverview extends Component {
 
   onDeleteSeriesModalClose = () => {
     this.setState({ isDeleteSeriesModalOpen: false });
-  }
-
-  onMeasure = ({ height }) => {
-    this.setState({ overviewHeight: height });
   }
 
   //
@@ -90,8 +97,7 @@ class SeriesIndexOverview extends Component {
 
     const {
       isEditSeriesModalOpen,
-      isDeleteSeriesModalOpen,
-      overviewHeight
+      isDeleteSeriesModalOpen
     } = this.state;
 
     const link = `/series/${titleSlug}`;
@@ -100,6 +106,11 @@ class SeriesIndexOverview extends Component {
       width: `${posterWidth}px`,
       height: `${posterHeight}px`
     };
+
+    const contentHeight = getContentHeight(rowHeight, isSmallScreen);
+    const overviewHeight = contentHeight - titleRowHeight;
+
+    console.log(overviewHeight);
 
     return (
       <div className={styles.container} style={style}>
@@ -140,7 +151,7 @@ class SeriesIndexOverview extends Component {
             />
           </div>
 
-          <div className={styles.info}>
+          <div className={styles.info} style={{ maxHeight: contentHeight }}>
             <div className={styles.titleRow}>
               <Link
                 className={styles.title}
@@ -166,17 +177,15 @@ class SeriesIndexOverview extends Component {
             </div>
 
             <div className={styles.details}>
-              <Measure onMeasure={this.onMeasure}>
-                <Link
-                  className={styles.overview}
-                  to={link}
-                >
-                  <TextTruncate
-                    line={Math.floor(overviewHeight / (defaultFontSize * lineHeight))}
-                    text={overview}
-                  />
-                </Link>
-              </Measure>
+              <Link
+                className={styles.overview}
+                to={link}
+              >
+                <TextTruncate
+                  line={Math.floor(overviewHeight / (defaultFontSize * lineHeight))}
+                  text={overview}
+                />
+              </Link>
 
               <SeriesIndexOverviewInfo
                 height={overviewHeight}
