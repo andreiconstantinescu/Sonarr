@@ -1,8 +1,9 @@
 import { combineReducers } from 'redux';
 import { enableBatching } from 'redux-batched-actions';
 import { routerReducer } from 'react-router-redux';
-import app, { defaultState as defaultappState } from './appReducers';
-import addSeries, { defaultState as defaultAddSeriesState } from './addSeriesReducers';
+import app, { defaultState as defaultAppState } from './appReducers';
+import * as addSeries from 'Store/Actions/addSeriesActions';
+import * as interactiveImport from 'Store/Actions/interactiveImportActions';
 import importSeries, { defaultState as defaultImportSeriesState } from './importSeriesReducers';
 import series, { defaultState as defaultSeriesState } from './seriesReducers';
 import seriesIndex, { defaultState as defaultSeriesIndexState } from './seriesIndexReducers';
@@ -24,13 +25,13 @@ import paths, { defaultState as defaultPathsState } from './pathReducers';
 import tags, { defaultState as defaultTagsState } from './tagReducers';
 import captcha, { defaultState as defaultCaptchaState } from './captchaReducers';
 import oAuth, { defaultState as defaultOAuthState } from './oAuthReducers';
-import interactiveImport, { defaultState as defaultInteractiveImportState } from './interactiveImportReducers';
 import rootFolders, { defaultState as defaultRootFoldersState } from './rootFolderReducers';
 import organizePreview, { defaultState as defaultOrganizePreviewState } from './organizePreviewReducers';
 
 export const defaultState = {
-  app: defaultappState,
-  addSeries: defaultAddSeriesState,
+  app: defaultAppState,
+  addSeries: addSeries.defaultState,
+  interactiveImport: interactiveImport.defaultState,
   importSeries: defaultImportSeriesState,
   series: defaultSeriesState,
   seriesIndex: defaultSeriesIndexState,
@@ -52,14 +53,13 @@ export const defaultState = {
   tags: defaultTagsState,
   captcha: defaultCaptchaState,
   oAuth: defaultOAuthState,
-  interactiveImport: defaultInteractiveImportState,
   rootFolders: defaultRootFoldersState,
   organizePreview: defaultOrganizePreviewState
 };
 
 export default enableBatching(combineReducers({
   app,
-  addSeries,
+  addSeries: addSeries.reducers,
   importSeries,
   series,
   seriesIndex,
@@ -81,7 +81,7 @@ export default enableBatching(combineReducers({
   tags,
   captcha,
   oAuth,
-  interactiveImport,
+  interactiveImport: interactiveImport.reducers,
   rootFolders,
   organizePreview,
   routing: routerReducer

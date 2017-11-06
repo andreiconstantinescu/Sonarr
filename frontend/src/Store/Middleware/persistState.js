@@ -1,6 +1,6 @@
 import _ from 'lodash';
 import persistState from 'redux-localstorage';
-import * as addSeriesReducers from 'Store/Reducers/addSeriesReducers';
+import actions from 'Store/Actions';
 import * as episodeReducers from 'Store/Reducers/episodeReducers';
 import * as seriesIndexReducers from 'Store/Reducers/seriesIndexReducers';
 import * as seriesEditorReducers from 'Store/Reducers/seriesEditorReducers';
@@ -11,11 +11,10 @@ import * as blacklistReducers from 'Store/Reducers/blacklistReducers';
 import * as wantedReducers from 'Store/Reducers/wantedReducers';
 import * as settingsReducers from 'Store/Reducers/settingsReducers';
 import * as systemReducers from 'Store/Reducers/systemReducers';
-import * as interactiveImportReducers from 'Store/Reducers/interactiveImportReducers';
 import * as queueReducers from 'Store/Reducers/queueReducers';
 
+// TODO: Eliminate Reducers
 const reducers = [
-  addSeriesReducers,
   episodeReducers,
   seriesIndexReducers,
   seriesEditorReducers,
@@ -26,20 +25,21 @@ const reducers = [
   wantedReducers,
   settingsReducers,
   systemReducers,
-  interactiveImportReducers,
   queueReducers
 ];
 
 const columnPaths = [];
 
-const paths = _.reduce(reducers, (acc, reducer) => {
-  reducer.persistState.forEach((path) => {
-    if (path.match(/\.columns$/)) {
-      columnPaths.push(path);
-    }
+const paths = _.reduce([...actions, ...reducers], (acc, action) => {
+  if (action.persistState) {
+    action.persistState.forEach((path) => {
+      if (path.match(/\.columns$/)) {
+        columnPaths.push(path);
+      }
 
-    acc.push(path);
-  });
+      acc.push(path);
+    });
+  }
 
   return acc;
 }, []);
